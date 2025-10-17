@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+table {
+    border: 1px solid #e2e8f0;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f8fafc;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+
+.bg-blue-600 {
+    background-color: #2563eb;
+}
+.hover\:bg-blue-700:hover {
+    background-color: #1d4ed8;
+}
+
+
+.text-yellow-400 {
+    color: #facc15;
+}
+
+
+.transition {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+
+.max-h-\[600px\] {
+    max-height: 600px;
+}
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+
+
+
+.review-content {
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-line;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.review-card {
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-actions {
+    flex-shrink: 0;
+    margin-top: 1rem;
+}
+
+.review-text-container {
+    min-width: 0;
+}
+
+
+.admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* Стили для FAQ в админке */
+.truncate-multiline {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+}
+
+.faq-answer {
+    word-wrap: break-word;
+    white-space: pre-line;
+}
+
+/* Улучшенные стили для таблицы */
+.admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.max-w-xs {
+    max-width: 20rem;
+}

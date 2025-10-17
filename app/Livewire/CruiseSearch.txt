@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use App\Models\CruiseLine;
+
+class CruiseSearch extends Component {
+    public $search = '';
+    
+    public function render() {
+        return view('livewire.cruise-search', [
+            'cruises' => CruiseLine::where('name', 'like', "%$this->search%")->paginate(10)
+        ]);
+    }
+}

@@ -1,0 +1,188 @@
+<?php
+
+namespace App\Http\Livewire;
+
+use Livewire\Component;
+use App\Models\CruiseLine;
+use Livewire\WithPagination;
+
+class CruiseLinesList extends Component
+{
+    use WithPagination;
+    
+    public $search = '';
+    public $sortField = 'departure_time';
+    public $sortDirection = 'asc';
+    public $minPrice = '';
+    public $maxPrice = '';
+    public $dateFrom = '';
+    public $dateTo = '';
+    public $timeRemaining = [];
+    public $cruiseLines = []; 
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'minPrice' => ['except' => ''],
+        'maxPrice' => ['except' => ''],
+        'dateFrom' => ['except' => '', 'as' => 'from'], 
+        'dateTo' => ['except' => '', 'as' => 'to'],
+        'sortField' => ['except' => 'departure_time'],
+        'sortDirection' => ['except' => 'asc'],
+    ];
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortDirection = 'asc';
+        }
+        $this->sortField = $field;
+    }
+
+    public function resetFilters()
+    {
+        $this->reset([
+            'search', 
+            'minPrice', 
+            'maxPrice', 
+            'dateFrom', 
+            'dateTo',
+            'sortField',
+            'sortDirection'
+        ]);
+    }
+
+    public function updatedDateFrom()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateTo()
+    {
+        $this->resetPage();
+    }
+
+    public function mount()
+        {
+            $this->updateTimeRemaining();
+        }
+
+
+     public function loadCruiseLines()
+    {
+        $this->cruiseLines = CruiseLine::query()
+            ->active()
+            ->when($this->search, function ($query) {
+                $query->where(function($q) {
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                      ->orWhere('description', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->when($this->minPrice, function ($query) {
+                $query->where('price_per_seat', '>=', $this->minPrice);
+            })
+            ->when($this->maxPrice, function ($query) {
+                $query->where('price_per_seat', '<=', $this->maxPrice);
+            })
+            ->when($this->dateFrom, function ($query) {
+                $query->where('departure_time', '>=', $this->dateFrom);
+            })
+            ->when($this->dateTo, function ($query) {
+                $query->where('departure_time', '<=', $this->dateTo);
+            })
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->get();
+    }
+
+
+
+    protected function updateTimeRemaining()
+    {
+        $cruises = CruiseLine::query()
+            ->active()
+            ->when($this->search, function ($query) {
+                $query->where(function($q) {
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                      ->orWhere('description', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->when($this->minPrice, function ($query) {
+                $query->where('price_per_seat', '>=', $this->minPrice);
+            })
+            ->when($this->maxPrice, function ($query) {
+                $query->where('price_per_seat', '<=', $this->maxPrice);
+            })
+            ->when($this->dateFrom, function ($query) {
+                $query->where('departure_time', '>=', $this->dateFrom);
+            })
+            ->when($this->dateTo, function ($query) {
+                $query->where('departure_time', '<=', $this->dateTo);
+            })
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->get();
+
+        foreach ($cruises as $cruise) {
+            $this->timeRemaining[$cruise->id] = $this->calculateTimeRemaining($cruise);
+        }
+    }
+
+
+    public function getInitialTimeRemaining($cruise)
+    {
+        return $this->calculateTimeRemaining($cruise);
+    }
+
+    protected function calculateTimeRemaining($cruise)
+    {
+        $diff = $cruise->departure_time->subDay()->diffInSeconds(now());
+        
+        if ($diff <= 0) return 'Booking closed';
+        
+        $days = floor($diff / (60 * 60 * 24));
+        $hours = floor(($diff % (60 * 60 * 24)) / (60 * 60));
+        $minutes = floor(($diff % (60 * 60)) / 60);
+        
+        return $days > 0 
+            ? "${days}d ${hours}h"
+            : ($hours > 0 ? "${hours}h ${minutes}m" : "${minutes}m");
+    }
+
+    public function updating($name, $value)
+    {
+        if (in_array($name, ['search', 'dateFrom', 'dateTo', 'minPrice', 'maxPrice', 'sortField', 'sortDirection'])) {
+            $this->updateTimeRemaining();
+        }
+    }
+
+    public function render()
+    {
+        $cruiseLines = CruiseLine::query()
+            ->active()
+            ->when($this->search, function ($query) {
+                $query->where(function($q) {
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                      ->orWhere('description', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->when($this->minPrice, function ($query) {
+                $query->where('price_per_seat', '>=', $this->minPrice);
+            })
+            ->when($this->maxPrice, function ($query) {
+                $query->where('price_per_seat', '<=', $this->maxPrice);
+            })
+            ->when($this->dateFrom, function ($query) {
+                $query->where('departure_time', '>=', $this->dateFrom);
+            })
+            ->when($this->dateTo, function ($query) {
+                $query->where('departure_time', '<=', $this->dateTo);
+            })
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate(10);
+
+        return view('livewire.cruise-lines-list', [
+            'cruiseLines' => $cruiseLines
+        ]);
+    }
+    
+}
