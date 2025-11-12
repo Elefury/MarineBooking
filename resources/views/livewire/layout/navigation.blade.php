@@ -6,15 +6,15 @@ new class extends Component {
     public function logout(): void
     {
         auth()->guard('web')->logout();
-        
+
         session()->invalidate();
         session()->regenerateToken();
-        
+
         session()->flush();
 
         $this->redirect('/', navigate: false);
     }
-}; 
+};
 ?>
 
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
@@ -30,42 +30,42 @@ new class extends Component {
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Main Page') }}
+                        {{ __('Главная') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('cruises.index')" :active="request()->routeIs('cruises.index')" wire:navigate>
-                        {{ __('Cruises') }}
+                        {{ __('Круизы') }}
                     </x-nav-link>
 
                      <x-nav-link :href="route('voyages.index')" :active="request()->routeIs('voyages.index')" wire:navigate>
-                        {{ __('Routes') }}
+                        {{ __('Рейсы') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate>
-                        {{ __('About us') }}
+                        {{ __('О нас') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('faq.index')" :active="request()->routeIs('faq.index')" wire:navigate>
                         {{ __('FAQ') }}
-                    </x-nav-link> 
-
-                     <x-nav-link :href="route('reviews.index')" :active="request()->routeIs('reviews.*')" wire:navigate>
-                        {{ __('Reviews') }}
                     </x-nav-link>
 
-                                        
-                </div>               
+                     <x-nav-link :href="route('reviews.index')" :active="request()->routeIs('reviews.*')" wire:navigate>
+                        {{ __('Отзывы') }}
+                    </x-nav-link>
+
+
+                </div>
             </div>
 
-            
-      
+
+
             <div class="hidden sm:flex sm:items-center sm:ms-6">
 
                 <x-dropdown-link :href="route('profile')" wire:navigate>
                 <div class="shrink-0">
-                    <img 
-                        src="{{ asset('images/default_avatar.jpg') }}" 
-                        alt="User avatar" 
+                    <img
+                        src="{{ asset('images/default_avatar.jpg') }}"
+                        alt="User avatar"
                         class="h-8 w-8 rounded-full object-cover border border-gray-200"
                     >
                 </div>
@@ -75,8 +75,8 @@ new class extends Component {
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             @auth
-                                <div x-data="{ name: '{{ auth()->user()->name }}' }" 
-                                     x-text="name" 
+                                <div x-data="{ name: '{{ auth()->user()->name }}' }"
+                                     x-text="name"
                                      x-on:profile-updated.window="name = $event.detail.name">
                                 </div>
                             @else
@@ -96,7 +96,7 @@ new class extends Component {
                             {{ __('Админ. панель') }}
                         </x-dropdown-link>
                     @endif
-                         
+
 
                         <x-dropdown-link :href="route('profile')" wire:navigate>
                             {{ __('Профиль') }}
@@ -142,7 +142,7 @@ new class extends Component {
             </x-responsive-nav-link>
 
 
-            
+
             <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate>
                 {{ __('О компании') }}
             </x-responsive-nav-link>
@@ -150,31 +150,31 @@ new class extends Component {
 
             <x-responsive-nav-link :href="route('faq.index')" :active="request()->routeIs('faq.index')" wire:navigate>
                 {{ __('FAQ') }}
-            </x-responsive-nav-link> 
+            </x-responsive-nav-link>
 
             <x-responsive-nav-link :href="route('reviews.index')" :active="request()->routeIs('reviews.*')" wire:navigate>
                 {{ __('Отзывы') }}
-            </x-responsive-nav-link> 
+            </x-responsive-nav-link>
 
         </div>
 
 
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="flex items-center px-4">
-           
+
                 <div class="shrink-0 mr-3">
-                    <img 
-                        src="{{ asset('images/default_avatar.jpg') }}" 
-                        alt="User avatar" 
+                    <img
+                        src="{{ asset('images/default_avatar.jpg') }}"
+                        alt="User avatar"
                         class="h-10 w-10 rounded-full object-cover border border-gray-200"
                     >
                 </div>
 
             <div class="px-4">
                 @auth
-                    <div class="font-medium text-base text-gray-800" 
-                         x-data="{ name: '{{ auth()->user()->name }}' }" 
-                         x-text="name" 
+                    <div class="font-medium text-base text-gray-800"
+                         x-data="{ name: '{{ auth()->user()->name }}' }"
+                         x-text="name"
                          x-on:profile-updated.window="name = $event.detail.name">
                     </div>
                     <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email }}</div>
